@@ -1,5 +1,4 @@
 import React from 'react'
-import Imgcards from '../Component/Imgcards'
 import ImgCarousels from '../Component/ImgCarousels'
 import { Container } from 'react-bootstrap'
 

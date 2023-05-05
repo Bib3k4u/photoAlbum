@@ -1,45 +1,40 @@
 import React, { useState } from 'react';
-import Imgcards from '../Component/Imgcards';
-import ImgShowCase from '../Component/ImgShowCase';
-import Images from '../Images';
-function ImageUpload()
-{
-  
-}
-const Create = () => {
-  const[image,setImage] = useState("");
-  const length = Images.length;
-  const[id,setId] = useState(length);
-  function convertToBase64(e) {
-    console.log(e);
-    var reader = new FileReader();
-    reader.readAsDataURL(e.target.files[0]);
-    reader.onload=()=>{
-      // console.log(reader.result); 
 
-      setImage(reader.result);
-      setId(id+1);
-      let newImg = {id:id,url:image};
-      Images.push(newImg);
-      
-    }
-    reader.onerror = error =>{
-      console.log("Error: ",error);
-  };
-  
+function Create() {
+  const [selectedFiles, setSelectedFiles] = useState([]);
+
+  const handleFileInputChange = (event) => {
+    setSelectedFiles(event.target.files);
   }
-  
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+
+    const formData = new FormData();
+    for (let i = 0; i < selectedFiles.length; i++) {
+      formData.append('images', selectedFiles[i]);
+    }
+
+    fetch('/upload', {
+      method: 'POST',
+      body: formData,
+    })
+      .then(response => response.json())
+      .then(data => {
+        // console.log('Images uploaded successfully:', data);
+        alert("Image upload succesfully");
+      })
+      .catch(error => {
+        // console.error('Error uploading images:', error);
+        alert("unable to upload images");
+      });
+  }
 
   return (
-    <div>
-        <input
-          accept="image/*"
-          type="file"
-          onChange={convertToBase64}
-         />
-         {image==""||image==null?"":<ImgShowCase imageUrls={Images} columnCount="4" gap="5" />}
-    </div>
-  )
+    <form onSubmit={handleSubmit}>
+      <input type="file" name="images" multiple onChange={handleFileInputChange} />
+      <button type="submit">Upload</button>
+    </form>
+  );
 }
-
-export default Create
+export default Create;
